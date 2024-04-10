@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   Card,
   Typography,
@@ -12,6 +13,9 @@ import { RxCrossCircled } from "react-icons/rx";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import { EditExpense } from "../Modals";
+import { MdCardTravel } from "react-icons/md";
+import { IoFastFoodOutline } from "react-icons/io5";
+import { MdMovieFilter } from "react-icons/md";
 
 export default function TransactionTable({
   data,
@@ -29,7 +33,6 @@ export default function TransactionTable({
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-
   // edit module opening && closing
   const handleOpenEditExpense = (data, index) => {
     setEditingExpense({ ...data, index });
@@ -41,8 +44,15 @@ export default function TransactionTable({
     setEditingExpense(null);
   };
 
+  // deleting expenses from table
 
+  const handleDeleteExpense = (data, index) => {
+    setExpenseData((prev) => prev.filter((_, i) => i !== index));
+    setBalance((prev) => prev + parseInt(data?.expenseAmount));
+    setExpense((prev) => prev - parseInt(data?.expenseAmount));
+  };
 
+  // pagination
   const getPageNumbers = (totalPages) => {
     const pageNumbers = [];
     for (let currPage = 1; currPage <= totalPages; currPage++)
@@ -62,35 +72,30 @@ export default function TransactionTable({
     setCurrentPage(totalPages);
   };
 
-  const handleDeleteExpense = (data, index) => {
-    setExpenseData(prev => prev.filter((_, i) => i !== index));
-    setBalance(prev => prev + parseInt(data?.expenseAmount));
-    setExpense(prev => prev - parseInt(data?.expenseAmount));
-  };
-  
-
-  
   useEffect(() => {
     if (data) setRows(data);
   }, [data]);
 
+  console.log(data);
+
   return (
-    <Card className="h-full w-full">
-      <CardBody className="px-1">
-        <table className="mt-2 w-full min-w-max table-auto text-left">
+    <Card className="h-53 w-full">
+      <CardBody className="px-4 py-1">
+        <table className="w-full min-w-max table-auto text-left">
           <tbody>
             {rows?.length > 0 ? (
               rows?.slice(startIndex, endIndex).map((item, index) => {
-                const isLast = index === rows.length - 1;
-                const classes = isLast
-                  ? "p-1"
-                  : "p-1 border-b border-blue-gray-50";
-
                 return (
                   <tr key={item.expenseTitle}>
-                    <td className={classes}>
+                    <td>
                       <div className="flex items-center gap-3">
-                        <Avatar src="" alt="" size="sm" />
+                        {item.expenseCategory === "Food" && (
+                          <IoFastFoodOutline  size={30}/>
+                        )}
+                        {item.expenseCategory === "Travel" && <MdCardTravel  size={30}/>}
+                        {item.expenseCategory === "Entertainment" && (
+                          <MdMovieFilter  size={30}/>
+                        )}
                         <div className="flex flex-col">
                           <Typography
                             variant="small"
@@ -109,11 +114,11 @@ export default function TransactionTable({
                         </div>
                       </div>
                     </td>
-                    <td className="items-center justify-end mr-2">
+                    <td className="items-center mr-2">
                       <Typography
-                        variant="large"
+                        variant="paragraph"
                         color="blue-gray"
-                        className="font-extrabold text-[#f4bb4a]"
+                        className="font-extrabold text-[#f4bb4a] flex justify-center"
                       >
                         &#8377; {item.expenseAmount}
                       </Typography>
@@ -149,20 +154,20 @@ export default function TransactionTable({
           </tbody>
         </table>
       </CardBody>
-      <CardFooter className="flex items-center justify-center border-t border-blue-gray-50 p-4">
-        <div className="flex gap-2">
+      <CardFooter className="flex items-center justify-center border-t border-blue-gray-100 px-4 py-2">
+        <div className="flex">
           <Button
             onClick={handleFirstPage}
             disabled={currentPage === 1}
             size="sm"
-            className="rounded-xl bg-[#f1f1f1] border-collapse text-black"
+            className="rounded-xl bg-[#f1f1f1] border-collapse text-black mx-2"
           >
             <FaArrowLeft />
           </Button>
           {pageNumbers.map((pageNumber) => (
             <Button
               size="sm"
-              className="rounded-xl bg-[#43967b] border-collapse"
+              className="rounded-xl bg-[#43967b] border-collapse mx-1"
               key={pageNumber}
               onClick={() => handlePageClick(pageNumber)}
             >
@@ -173,13 +178,14 @@ export default function TransactionTable({
             size="sm"
             onClick={handleLastPage}
             disabled={currentPage === totalPages}
-            className="rounded-xl  bg-[#f1f1f1] border-collapse text-black"
+            className="rounded-xl  bg-[#f1f1f1] border-collapse text-black mx-2"
           >
             <FaArrowRight />
           </Button>
         </div>
       </CardFooter>
       <EditExpense
+        data={editingExpense}
         open={openEditExpense}
         handleClose={handleCloseEditExpense}
         setExpenseData={setExpenseData}

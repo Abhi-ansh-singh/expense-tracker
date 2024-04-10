@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import {
   Button,
   Dialog,
@@ -10,6 +12,8 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Select, Option } from "@material-tailwind/react";
 import { useEffect } from "react";
+import moment from "moment";
+
 
 export default function EditExpense({
   open,
@@ -23,8 +27,7 @@ export default function EditExpense({
   const categoryOption = [
     { value: "Food" },
     { value: "Travel" },
-    { value: "Entertainment" },
-    { value: "Other" },
+    { value: "Entertainment" }
   ];
   const schema = yup.object().shape({
     expenseAmount: yup
@@ -34,10 +37,10 @@ export default function EditExpense({
     expenseTitle: yup.string().required("This Field is required"),
     expenseCategory: yup.string().required("This Field is required"),
     expenseDate: yup
-      .date("Input ust be a date")
+      .date("Input must be a date")
       .required("This field is required"),
   });
-
+  
   const {
     register,
     reset,
@@ -75,13 +78,11 @@ export default function EditExpense({
     }
   };
 
-  const formValues = getValues();
-
   const setAllValues = () => {
     setValue("expenseTitle", data?.expenseTitle);
     setValue("expenseAmount", data?.expenseAmount);
-    setValue("expenseDate", data?.expenseDate);
-    setValue("expenseCategory", data?.expenseCategory);
+    setValue("expenseCategory",data?.expenseCategory);
+    setValue("expenseDate", moment(data?.expenseDate).format("YYYY-MM-DD"));
   };
 
   useEffect(() => {
@@ -102,12 +103,13 @@ export default function EditExpense({
             onSubmit={handleSubmit(handleEditExpense)}
             className="flex flex-col gap-2"
           >
-            <div>
-              <div className="mb-2 flex justify-around">
+            <div className="flex gap-2">
+              <div className="mb-2 basis-[49%]">
                 <Input
                   {...register("expenseTitle")}
                   label="Title"
                   type="text"
+                  
                   error={errors?.expenseTitle}
                 />
                 {errors?.expenseTitle && (
@@ -115,6 +117,8 @@ export default function EditExpense({
                     {errors?.expenseTitle?.message}
                   </span>
                 )}
+                </div>
+                <div className="mb-2 basis-[49%]">
                 <Input
                   {...register("expenseAmount")}
                   label="Price"
@@ -128,8 +132,8 @@ export default function EditExpense({
                 )}
               </div>
             </div>
-            <div>
-              <div className="mb-2 flex justify-between">
+            <div className="flex gap-2">
+              <div className="mb-2 basis-[49%]">
                 <Controller
                   control={control}
                   name="expenseCategory"
@@ -153,6 +157,8 @@ export default function EditExpense({
                     {errors?.expenseCategory?.message}
                   </span>
                 )}
+                </div>
+                <div className="mb-2 basis-[49%]">
                 <Input
                   label="Date"
                   type="date"

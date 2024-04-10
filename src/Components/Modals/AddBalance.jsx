@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   Button,
   Dialog,
@@ -27,7 +28,6 @@ export default function AddBalance({
     reset,
     formState: { errors },
     handleSubmit,
-    watch,
   } = useForm({ resolver: yupResolver(schema) });
 
   const handleAddBalance = (data) => {
@@ -61,14 +61,12 @@ export default function AddBalance({
                 </span>
               )}
             </div>
-            <Button type="submit" variant="gradient" color="yellow">
+            <Button type="submit" className="bg-[#f4bb4a]">
             <span className="text-white font-bold">Add Balance</span>
           </Button>
           <Button
-            variant="gradient"
-            color="red"
             onClick={onClose}
-            className="mr-1"
+            className="mr-1 bg-[#f1f1f1] text-blue-gray-800"
           >
             <span>Cancel</span>
           </Button>
